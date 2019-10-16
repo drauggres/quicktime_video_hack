@@ -15,7 +15,10 @@ If you want to contribute to code or documentation, please go ahead :-D
 I have written some documentation here [doc/technical_documentation.md](https://github.com/danielpaulus/quicktime_video_hack/blob/master/doc/technical_documentation.md)
 So if you are just interested in the protocol or if you want to implement this in a different programming language than golang, read the docs.
 ## 3. Usage& Current State of the Tool
-run `go run main.go --help` to see how it works
+1. `npm run dist:web:client`
+2. connect device
+3. `npm run start:web:server`
+4. open http://127.0.0.1:8080/ in browser
 
 Progress:
 1. ~~Make the `go run main.go dumpraw` work on the first execution (currently you have to run it twice and it will start recording on the second run)~~

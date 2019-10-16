@@ -1,0 +1,27 @@
+{
+  "name": "quicktime_video_hack",
+  "version": "0.0.1",
+  "description": "Q.uickTime V.ideo H.ack",
+  "main": "main.go",
+  "scripts": {
+    "init:web:client": "git submodule init && git submodule update && cd ws-scrcpy && npm install",
+    "dist:web:client": "npm run init:web:client && cd ws-scrcpy && npm run dist",
+    "start:web:server": "go run server.go client.go hub.go naluhubwriter.go"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/danielpaulus/quicktime_video_hack.git"
+  },
+  "keywords": [
+    "ios",
+    "screen",
+    "mirroring",
+    "quicktime"
+  ],
+  "author": "Daniel Paulus",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/danielpaulus/quicktime_video_hack/issues"
+  },
+  "homepage": "https://github.com/danielpaulus/quicktime_video_hack#readme"
+}
