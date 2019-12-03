@@ -53,6 +53,12 @@ The commands work as following:
 	gstreamer   qvh will open a new window and push AV data to gstreamer.
 ```
 
+## 3.1 Usage
+1. `npm run dist:web:client`
+2. connect device
+3. `npm run start:web:server`
+4. open http://127.0.0.1:8080/ in browser
+
 ## 3. Technical Docs
 I have written some documentation here [doc/technical_documentation.md](https://github.com/danielpaulus/quicktime_video_hack/blob/master/doc/technical_documentation.md)
 So if you are just interested in the protocol or if you want to implement this in a different programming language than golang, read the docs.

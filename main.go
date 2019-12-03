@@ -2,8 +2,10 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"os"
 	"os/signal"
 
@@ -24,6 +26,7 @@ Usage:
   qvh activate [--udid=<udid>] [-v]
   qvh record <h264file> <wavfile> [-v] [--udid=<udid>]
   qvh gstreamer [-v]
+  qvh websocket [-v]
   qvh --version | version
 
 
@@ -40,6 +43,7 @@ The commands work as following:
 				Audio will be saved in a uncompressed wav file.
 				Run like: "qvh record /home/yourname/out.h264 /home/yourname/out.wav"
 	gstreamer   qvh will open a new window and push AV data to gstreamer.
+	websocket   qvh will create WebSocket server and listen for connections.
   `, version)
 	arguments, _ := docopt.ParseDoc(usage)
 	log.SetFormatter(&log.JSONFormatter{})
@@ -89,6 +93,10 @@ The commands work as following:
 	if gstreamerCommand {
 		startGStreamer(udid)
 	}
+	websocketCommand, _ := arguments.Bool("websocket")
+	if websocketCommand {
+		startWebSocketServer(udid)
+	}
 }
 
 func printVersion() {
@@ -102,6 +110,33 @@ func startGStreamer(udid string) {
 	log.Debug("Starting Gstreamer")
 	gStreamer := gstadapter.New()
 	startWithConsumer(gStreamer, udid)
+}
+
+func startWebSocketServer(udid string) {
+	log.Debug("Starting WebSocket server")
+	stopSignal := make(chan interface{})
+	waitForSigInt(stopSignal)
+	activate(udid)
+	hub := newHub()
+	go hub.run(stopSignal)
+
+	m := http.NewServeMux()
+	s := http.Server{Addr: ":8080", Handler: m}
+
+	m.Handle("/", http.StripPrefix("/", http.FileServer(http.Dir("ws-scrcpy/dist/public"))))
+
+	m.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		serveWs(hub, w, r)
+	})
+	go func() {
+		err := s.ListenAndServe()
+		if err != nil {
+			log.Fatal("ListenAndServe: ", err)
+		}
+	}()
+
+	<-stopSignal
+	s.Shutdown(context.Background())
 }
 
 // Just dump a list of what was discovered to the console
